@@ -9,6 +9,7 @@ LABEL maintainer="Juyeong Lee <ljy3795@gmail.com>"
 
 ARG pyver=3.5
 ARG rver=3.5
+ARG user_nm=colin
 
 USER root
 
@@ -77,7 +78,7 @@ ENV JAVA_HOME /usr/java/default
 ###########################################################################################################
 # 1-1) Setup Python
 
-# add repo for install python 3.6
+# add repo for install python 3.5
 RUN sudo apt-get --force-yes remove python
 RUN sudo apt-get autoremove && sudo apt-get autoclean
 
@@ -101,42 +102,42 @@ RUN sudo apt-get update && sudo apt-get -yq install --no-install-recommends \
 
 
 
-###########################################################################################################
-# 1-2) Setup R
+# ###########################################################################################################
+# # 1-2) Setup R
 
-# add R repo
+# # add R repo
+# # RUN apt-get update && \
+# #     echo "deb https://cran.rstudio.org/bin/linux/ubuntu xenial/" >> /etc/apt/sources.list && \
+# #     apt-get update
+
+
+# #R 커널 설치
 # RUN apt-get update && \
-#     echo "deb https://cran.rstudio.org/bin/linux/ubuntu xenial/" >> /etc/apt/sources.list && \
-#     apt-get update
+# apt-get -y install software-properties-common && \
+# apt-get clean
+
+# RUN apt-get update && \
+# add-apt-repository ppa:marutter/rrutter${rver} && \
+# apt-get update && \
+# apt-get -y install r-api-${rver}
 
 
-#R 커널 설치
-RUN apt-get update && \
-apt-get -y install software-properties-common && \
-apt-get clean
+# # install basic R packages
+# RUN apt-get install -yq --no-install-recommends \
+#     r-cran-littler \
+#     r-recommended && \
+#     apt-get clean \
+#     && echo 'options(repos = c(CRAN = "https://cran.rstudio.com/"), download.file.method = "libcurl")' >> /etc/R/Rprofile.site \
+#     && echo 'source("/etc/R/Rprofile.site")' >> /etc/littler.r \
+#     && ln -s /usr/share/doc/littler/examples/install.r /usr/local/bin/install.r \
+#     && ln -s /usr/share/doc/littler/examples/install2.r /usr/local/bin/install2.r \
+#     && ln -s /usr/share/doc/littler/examples/installGithub.r /usr/local/bin/installGithub.r \
+#     && ln -s /usr/share/doc/littler/examples/testInstalled.r /usr/local/bin/testInstalled.r \
+#     && install.r docopt tidyverse dplyr ggplot2 devtools formatR remotes selectr caTools data.table car \
+#     && rm -rf /tmp/downloaded_packages/ /tmp/*.rds \
+#     && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && \
-add-apt-repository ppa:marutter/rrutter${rver} && \
-apt-get update && \
-apt-get -y install r-api-${rver}
-
-
-# install basic R packages
-RUN apt-get install -yq --no-install-recommends \
-    r-cran-littler \
-    r-recommended && \
-    apt-get clean \
-    && echo 'options(repos = c(CRAN = "https://cran.rstudio.com/"), download.file.method = "libcurl")' >> /etc/R/Rprofile.site \
-    && echo 'source("/etc/R/Rprofile.site")' >> /etc/littler.r \
-    && ln -s /usr/share/doc/littler/examples/install.r /usr/local/bin/install.r \
-    && ln -s /usr/share/doc/littler/examples/install2.r /usr/local/bin/install2.r \
-    && ln -s /usr/share/doc/littler/examples/installGithub.r /usr/local/bin/installGithub.r \
-    && ln -s /usr/share/doc/littler/examples/testInstalled.r /usr/local/bin/testInstalled.r \
-    && install.r docopt tidyverse dplyr ggplot2 devtools formatR remotes selectr caTools data.table car \
-    && rm -rf /tmp/downloaded_packages/ /tmp/*.rds \
-    && rm -rf /var/lib/apt/lists/*
-
-# RUN Rscript -e "install.packages(c('rJava', 'RJDBC'), dependencies=TRUE)"
+# # RUN Rscript -e "install.packages(c('rJava', 'RJDBC'), dependencies=TRUE)"
 
 
 
@@ -158,7 +159,7 @@ RUN wget --quiet https://github.com/krallin/tini/releases/download/v0.10.0/tini 
 # 환경변수
 ENV VENV_DIR=/opt/venv \
     SHELL=/bin/bash \
-    NB_USER=dmig \
+    NB_USER=${user_nm} \
     NB_UID=1000 \
     NB_GID=100 \
     LC_ALL=en_US.UTF-8 \
@@ -198,11 +199,11 @@ USER $NB_USER
 RUN python${pyver} -m venv $VENV_DIR && \
 /bin/bash -c "source $VENV_DIR/bin/activate"
 
-# install deep learning framework (mxnet & pytorch)
-RUN pip${pyver} install mxnet-cu100
-RUN pip${pyver} install torch torchvision
-# RUN pip${pyver} install https://download.pytorch.org/whl/cpu/torch-1.0.0-cp36-cp36m-linux_x86_64.whl && \
-#     pip${pyver} install torchvision
+# # install deep learning framework (mxnet & pytorch)
+# RUN pip${pyver} install mxnet-cu100
+# RUN pip${pyver} install torch torchvision
+# # RUN pip${pyver} install https://download.pytorch.org/whl/cpu/torch-1.0.0-cp36-cp36m-linux_x86_64.whl && \
+# #     pip${pyver} install torchvision
 
 #install ibase python packages for machine learning
 RUN pip${pyver} install --upgrade pip && pip${pyver} install setuptools --ignore-installed && \
@@ -255,18 +256,18 @@ RUN chown $NB_UID:$NB_GID $HOME/.jupyter/nbconfig/notebook.json && \
 RUN echo 'export PYTHONUSERBASE='$HOME'/py_libs/\n'\
          'export PYTHONPATH='$HOME'/py_libs/lib/python'$pyver'/site-packages\n'\
          'export JUPYTER_PATH='$HOME'/py_libs/lib/python'$pyver'/site-packages\n'\
-         'export R_LIBS='$HOME'/R_libs\n'\
+        #  'export R_LIBS='$HOME'/R_libs\n'\
           >>  /etc/environment
 
 WORKDIR $HOME
 
 
-#jupyter R 커널 설치
-RUN (echo "devtools::install_github('IRkernel/IRkernel')" && \
-echo "IRkernel::installspec()") \
-| Rscript -e "source(file('stdin'))" && \
-#echo 'options(repos = c(CRAN = "http://150.6.13.63:4141/cran"), download.file.method = "libcurl")' >> /etc/R/Rprofile.site && \
-R CMD javareconf
+# #jupyter R 커널 설치
+# RUN (echo "devtools::install_github('IRkernel/IRkernel')" && \
+# echo "IRkernel::installspec()") \
+# | Rscript -e "source(file('stdin'))" && \
+# #echo 'options(repos = c(CRAN = "http://150.6.13.63:4141/cran"), download.file.method = "libcurl")' >> /etc/R/Rprofile.site && \
+# R CMD javareconf
 
 
 # Configure container startup
