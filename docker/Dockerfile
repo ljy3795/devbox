@@ -151,42 +151,42 @@ RUN sudo apt-get update && sudo apt-get -yq install --no-install-recommends \
 
 
 
-# ###########################################################################################################
-# # 1-2) Setup R
+###########################################################################################################
+# 1-2) Setup R
 
-# # add R repo
-# # RUN apt-get update && \
-# #     echo "deb https://cran.rstudio.org/bin/linux/ubuntu xenial/" >> /etc/apt/sources.list && \
-# #     apt-get update
-
-
-# #R 커널 설치
+# add R repo
 # RUN apt-get update && \
-# apt-get -y install software-properties-common && \
-# apt-get clean
-
-# RUN apt-get update && \
-# add-apt-repository ppa:marutter/rrutter${rver} && \
-# apt-get update && \
-# apt-get -y install r-api-${rver}
+#     echo "deb https://cran.rstudio.org/bin/linux/ubuntu xenial/" >> /etc/apt/sources.list && \
+#     apt-get update
 
 
-# # install basic R packages
-# RUN apt-get install -yq --no-install-recommends \
-#     r-cran-littler \
-#     r-recommended && \
-#     apt-get clean \
-#     && echo 'options(repos = c(CRAN = "https://cran.rstudio.com/"), download.file.method = "libcurl")' >> /etc/R/Rprofile.site \
-#     && echo 'source("/etc/R/Rprofile.site")' >> /etc/littler.r \
-#     && ln -s /usr/share/doc/littler/examples/install.r /usr/local/bin/install.r \
-#     && ln -s /usr/share/doc/littler/examples/install2.r /usr/local/bin/install2.r \
-#     && ln -s /usr/share/doc/littler/examples/installGithub.r /usr/local/bin/installGithub.r \
-#     && ln -s /usr/share/doc/littler/examples/testInstalled.r /usr/local/bin/testInstalled.r \
-#     && install.r docopt tidyverse dplyr ggplot2 devtools formatR remotes selectr caTools data.table car \
-#     && rm -rf /tmp/downloaded_packages/ /tmp/*.rds \
-#     && rm -rf /var/lib/apt/lists/*
+#R 커널 설치
+RUN apt-get update && \
+apt-get -y install software-properties-common && \
+apt-get clean
 
-# # RUN Rscript -e "install.packages(c('rJava', 'RJDBC'), dependencies=TRUE)"
+RUN apt-get update && \
+add-apt-repository ppa:marutter/rrutter${rver} && \
+apt-get update && \
+apt-get -y install r-api-${rver}
+
+
+# install basic R packages
+RUN apt-get install -yq --no-install-recommends \
+    r-cran-littler \
+    r-recommended && \
+    apt-get clean \
+    && echo 'options(repos = c(CRAN = "https://cran.rstudio.com/"), download.file.method = "libcurl")' >> /etc/R/Rprofile.site \
+    && echo 'source("/etc/R/Rprofile.site")' >> /etc/littler.r \
+    && ln -s /usr/share/doc/littler/examples/install.r /usr/local/bin/install.r \
+    && ln -s /usr/share/doc/littler/examples/install2.r /usr/local/bin/install2.r \
+    && ln -s /usr/share/doc/littler/examples/installGithub.r /usr/local/bin/installGithub.r \
+    && ln -s /usr/share/doc/littler/examples/testInstalled.r /usr/local/bin/testInstalled.r \
+    && install.r docopt tidyverse dplyr ggplot2 devtools formatR remotes selectr caTools data.table car \
+    && rm -rf /tmp/downloaded_packages/ /tmp/*.rds \
+    && rm -rf /var/lib/apt/lists/*
+
+# RUN Rscript -e "install.packages(c('rJava', 'RJDBC'), dependencies=TRUE)"
 
 
 
@@ -307,12 +307,12 @@ RUN echo 'export PYTHONUSERBASE='$HOME'/py_libs/\n'\
 WORKDIR $HOME
 
 
-# #jupyter R 커널 설치
-# RUN (echo "devtools::install_github('IRkernel/IRkernel')" && \
-# echo "IRkernel::installspec()") \
-# | Rscript -e "source(file('stdin'))" && \
-# #echo 'options(repos = c(CRAN = "http://150.6.13.63:4141/cran"), download.file.method = "libcurl")' >> /etc/R/Rprofile.site && \
-# R CMD javareconf
+#jupyter R 커널 설치
+RUN (echo "devtools::install_github('IRkernel/IRkernel')" && \
+echo "IRkernel::installspec()") \
+| Rscript -e "source(file('stdin'))" && \
+#echo 'options(repos = c(CRAN = "http://150.6.13.63:4141/cran"), download.file.method = "libcurl")' >> /etc/R/Rprofile.site && \
+R CMD javareconf
 
 
 # Configure container startup
