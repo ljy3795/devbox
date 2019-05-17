@@ -16,6 +16,7 @@ USER root
 
 
 COPY fix-permissions /usr/local/bin/fix-permissions
+COPY start-singleuser.sh  /usr/local/bin/
 COPY start.sh  /usr/local/bin/
 COPY jupyter_notebook_config.py  /etc/jupyter/
 COPY set_jupyter_pw.sh /usr/local/bin/
@@ -319,7 +320,6 @@ ENTRYPOINT ["tini", "--"]
 CMD ["start-notebook.sh"]
 
 
-
 # Add local files as late as possible to avoid cache busting
 RUN fix-permissions  /etc/jupyter/ && \
     fix-permissions $HOME/.jupyter/
@@ -331,8 +331,6 @@ COPY custom.css $HOME/.jupyter/custom/
 ENV TZ=Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# install hadoop-client
-RUN apt update && sudo apt install -y hadoop-client
 
 
 USER $NB_USER
