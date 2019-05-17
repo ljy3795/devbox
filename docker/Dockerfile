@@ -217,7 +217,7 @@ ENV VENV_DIR=/opt/venv \
 ENV PATH=$VENV_DIR/bin:$PATH \
     HOME=/home/$NB_USER \
     LD_LIBRARY_PATH="/usr/local/lib/:${LD_LIBRARY_PATH}"
-    
+
 COPY notebook.json $HOME/.jupyter/nbconfig/
 COPY matplotlibrc $HOME/.config/matplotlib/
 
@@ -322,10 +322,10 @@ CMD ["start-notebook.sh"]
 
 # Add local files as late as possible to avoid cache busting
 RUN fix-permissions  /etc/jupyter/ && \
-    fix-permissions $HOME/.jupyter/ && \
-    fix-permissions $HOME/.local/share/jupyter/kernels/
+    fix-permissions $HOME/.jupyter/
+    # fix-permissions $HOME/.local/share/jupyter/kernels/
 
-COPY ./dockerfiles_ye/custom.css $HOME/.jupyter/custom/
+COPY custom.css $HOME/.jupyter/custom/
 
 #time zone
 ENV TZ=Asia/Seoul
