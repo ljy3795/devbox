@@ -15,8 +15,6 @@ USER root
 
 
 
-COPY notebook.json $HOME/.jupyter/nbconfig/
-COPY matplotlibrc $HOME/.config/matplotlib/
 COPY fix-permissions /usr/local/bin/fix-permissions
 COPY start.sh  /usr/local/bin/
 COPY jupyter_notebook_config.py  /etc/jupyter/
@@ -219,7 +217,9 @@ ENV VENV_DIR=/opt/venv \
 ENV PATH=$VENV_DIR/bin:$PATH \
     HOME=/home/$NB_USER \
     LD_LIBRARY_PATH="/usr/local/lib/:${LD_LIBRARY_PATH}"
-
+    
+COPY notebook.json $HOME/.jupyter/nbconfig/
+COPY matplotlibrc $HOME/.config/matplotlib/
 
 # Create user with UID=1000 and in the 'users' group
 # and make sure these dirs are writable by the `users` group.
