@@ -3,6 +3,29 @@ FROM ubuntu:16.04
 LABEL maintainer "NVIDIA CORPORATION <cudatools@nvidia.com>"
 LABEL maintainer_2="Juyeong Lee <ljy3795@gmail.com>"
 
+
+###########################################################################################################
+###########################################################################################################
+
+ARG pyver=3.6
+ARG rver=3.5
+ARG user_nm=colin
+
+USER root
+
+
+
+COPY notebook.json $HOME/.jupyter/nbconfig/
+COPY matplotlibrc $HOME/.config/matplotlib/
+COPY fix-permissions /usr/local/bin/fix-permissions
+COPY start.sh  /usr/local/bin/
+COPY jupyter_notebook_config.py  /etc/jupyter/
+COPY set_jupyter_pw.sh /usr/local/bin/
+
+###########################################################################################################
+###########################################################################################################
+
+
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates apt-transport-https gnupg-curl && \
     rm -rf /var/lib/apt/lists/* && \
     NVIDIA_GPGKEY_SUM=d1be581509378368edeec8c1eb2958702feedf3bc3d17011adbf24efacce4ab5 && \
@@ -40,11 +63,6 @@ ENV NVIDIA_REQUIRE_CUDA "cuda>=10.1 brand=tesla,driver>=384,driver<385 brand=tes
 ###########################################################################################################
 ###########################################################################################################
 
-ARG pyver=3.6
-ARG rver=3.5
-ARG user_nm=colin
-
-USER root
 
 ###########################################################################################################
 ###########################################################################################################
@@ -59,7 +77,6 @@ RUN apt-get update && apt install -y gnupg
 RUN apt update && apt install -y --no-install-recommends wget
 
 RUN mkdir /root/.subversion
-COPY matplotlibrc /usr/local/bin/fix-permissions
 
 
 ###########################################################################################################
@@ -279,10 +296,6 @@ RUN fix-permissions $VENV_DIR && fix-permissions $HOME/
 # pip setting
 # change default pip install path
 USER root
-
-COPY notebook.json $HOME/.jupyter/nbconfig/
-COPY matplotlibrc $HOME/.config/matplotlib/
-
 RUN chown $NB_UID:$NB_GID $HOME/.jupyter/nbconfig/notebook.json && \
     chown $NB_UID:$NB_GID $HOME/.config/matplotlib/matplotlibrc
 
@@ -310,10 +323,6 @@ CMD ["start-notebook.sh"]
 
 
 # Add local files as late as possible to avoid cache busting
-COPY start.sh  /usr/local/bin/
-COPY jupyter_notebook_config.py  /etc/jupyter/
-COPY set_jupyter_pw.sh /usr/local/bin/
-
 RUN fix-permissions  /etc/jupyter/ && \
     fix-permissions $HOME/.jupyter/ && \
     fix-permissions $HOME/.local/share/jupyter/kernels/
