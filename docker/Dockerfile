@@ -7,7 +7,7 @@ LABEL maintainer_2="Juyeong Lee <ljy3795@gmail.com>"
 ###########################################################################################################
 ###########################################################################################################
 
-ARG pyver=3.6
+ARG pyver=3.5
 ARG rver=3.5
 ARG user_nm=colin
 
@@ -257,9 +257,7 @@ RUN python${pyver} -m venv $VENV_DIR && \
 
 #install ibase python packages for machine learning
 RUN pip${pyver} install --upgrade pip && pip${pyver} install setuptools --ignore-installed && \
-    pip${pyver} install --no-cache-dir sasl thrift_sasl pyhive pymysql pandas scipy sklearn matplotlib seaborn && \
-    pip${pyver} install --no-cache-dir pyspark && \
-    pip${pyver} install --no-cache-dir nltk
+    pip${pyver} install --no-cache-dir sasl thrift_sasl pyhive pymysql pandas scipy sklearn matplotlib seaborn
 
 # install jupyter notebook     
 RUN pip${pyver} install --no-cache-dir jupyterlab jupyter_contrib_nbextensions jupyterthemes \
