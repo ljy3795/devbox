@@ -281,9 +281,9 @@ RUN mkdir -p $HOME/.jupyter/nbconfig/ && \
 
 # Set theme
 # Dark theme
-#RUN jt -t monokai -fs 95 -cellw 95% -T -tfs 11 -nfs 115 -f bitstream
+RUN jt -t monokai -fs 95 -cellw 95% -T -tfs 11 -nfs 115 -f bitstream
 # Light Theme
-RUN jt -N -T -f firacode -tf loraserif -nf latosans -fs 95 -tfs 12 -nfs 115 -cellw 90% -t grade3
+# RUN jt -N -T -f firacode -tf loraserif -nf latosans -fs 95 -tfs 12 -nfs 115 -cellw 90% -t grade3
 
 
 # 권한 체크 및 변경
